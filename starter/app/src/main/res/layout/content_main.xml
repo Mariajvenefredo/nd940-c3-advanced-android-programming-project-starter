@@ -7,16 +7,42 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".MainActivity"
+    android:background="@color/cream"
     tools:showIn="@layout/activity_main">
+    <ImageView
+        android:id="@+id/cloud_image"
+        android:layout_width="match_parent"
+        android:layout_height="170dp"
+        android:src="@drawable/cloud_image"
+        android:scaleType="fitXY"
+        android:adjustViewBounds="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <RadioGroup
+        android:id="@+id/radio_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/side_margin"
+        android:layout_marginEnd="@dimen/side_margin"
+        android:layout_margin="20dp"
+        app:layout_constraintBottom_toTopOf="@id/custom_button"
+        app:layout_constraintTop_toBottomOf="@+id/cloud_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.udacity.LoadingButton
         android:id="@+id/custom_button"
-        android:layout_width="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_height="60dp"
-        android:layout_margin="20dp"
+        android:layout_width="@dimen/rectWidth"
+        android:layout_height="@dimen/rectHeight"
+        android:backgroundTint="@color/cardview_dark_background"
+        app:customBackgroundColor="@color/mint"
+        app:customDownloadColor="@color/mediumMint"
+        app:customTextColor="@color/darkMint"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radio_group" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,4 +2,10 @@
     <dimen name="fab_margin">16dp</dimen>
 
     <dimen name="default_text_size">20sp</dimen>
+    <dimen name="rectWidth">260dp</dimen>
+    <dimen name="rectHeight">70dp</dimen>
+    <dimen name="buttonTextSize">20sp</dimen>
+    <dimen name="optionsTextSize">6sp</dimen>
+    <dimen name="side_margin">50dp</dimen>
+    <dimen name="radio_button_margin">20dp</dimen>
 </resources>
