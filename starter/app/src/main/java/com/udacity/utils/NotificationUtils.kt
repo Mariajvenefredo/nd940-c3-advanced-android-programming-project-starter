@@ -37,9 +37,15 @@ fun createCustomChannel(
 
 fun NotificationManager.sendNotification(
     context: Context,
-    messageBody: String,
-    pendingIntent: PendingIntent
+    pendingIntent: PendingIntent,
+    success: Boolean,
+    urlTitle: String = ""
 ) {
+    val description = if (success) {
+        context.getString(R.string.notification_description_success, urlTitle)
+    } else {
+        context.getString(R.string.notification_description_failed, urlTitle)
+    }
 
     val cloudImage = BitmapFactory.decodeResource(
         context.resources,
@@ -55,9 +61,10 @@ fun NotificationManager.sendNotification(
         CHANNEL_ID
     )
         .setContentTitle(context.getString(R.string.notification_title))
-        .setContentText(messageBody)
+        .setContentText(description)
         .setContentIntent(pendingIntent)
         .setStyle(bigPicStyle)
+        .setSmallIcon(R.drawable.cloud_image)
         .setLargeIcon(cloudImage)
         .setPriority(NotificationCompat.PRIORITY_HIGH)
         .setAutoCancel(true)

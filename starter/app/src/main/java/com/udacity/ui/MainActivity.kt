@@ -1,7 +1,6 @@
 package com.udacity.ui
 
 import android.app.DownloadManager
-import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
@@ -13,8 +12,10 @@ import android.os.Bundle
 import android.widget.RadioButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
+import com.udacity.DownloadStatus
 import com.udacity.R
+import com.udacity.UrlOption
 import com.udacity.utils.Constants.NOTIFICATION_ID
 import com.udacity.utils.createCustomChannel
 import com.udacity.utils.sendNotification
@@ -23,19 +24,27 @@ import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    private val notificationManager: NotificationManager =
-        getSystemService(NotificationManager::class.java)
-    private val detailIntent = Intent(applicationContext, DetailActivity::class.java)
+    lateinit var notificationManager: NotificationManager
+
+    lateinit var detailIntent: Intent
 
     private var downloadID: Long = 0
+    private lateinit var selectedUrl: UrlOption
+
     private lateinit var pendingIntent: PendingIntent
-    private lateinit var action: NotificationCompat.Action
+    //private lateinit var action: NotificationCompat.Action
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
+        notificationManager =
+            ContextCompat.getSystemService(
+                this,
+                NotificationManager::class.java
+            ) as NotificationManager
+        detailIntent = Intent(this, DetailActivity::class.java)
         createCustomChannel(applicationContext, notificationManager)
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
         createRadioButtons()
@@ -43,27 +52,25 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleDownloadClick() {
         val selectedValue = radio_group.checkedRadioButtonId
-        if (selectedValue == -1) {
+        if (selectedValue == NO_SELECTED_VALUE) {
             Toast
                 .makeText(applicationContext, R.string.no_url_selected, Toast.LENGTH_LONG)
                 .show()
 
         } else {
             custom_button.stateClicked()
-            val downloadInfo = URL_LIST[selectedValue]
+            val selectedOption = UrlOption.getById(selectedValue)
 
-            if (downloadInfo != null) {
-                download(downloadInfo)
-            }
+            download(selectedOption)
         }
     }
 
     private fun createRadioButtons() {
-        URL_LIST.forEach { (id, title_url) ->
+        UrlOption.ALL.forEach { option ->
             val radioButton = RadioButton(this.applicationContext)
 
-            radioButton.id = id
-            radioButton.text = applicationContext.getText(title_url.first)
+            radioButton.id = option.id
+            radioButton.text = applicationContext.getText(option.titleResId)
             radioButton.setTextColor(resources.getColor(R.color.darkMint, null))
             radioButton.textSize = resources.getDimension(R.dimen.optionsTextSize)
 
@@ -78,8 +85,21 @@ class MainActivity : AppCompatActivity() {
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+
             if (id == downloadID) {
+                val intentAction = intent.action
+                val isSuccess = getDownloadStatus(context, id)
+                val urlTitle = getShortTitle(context)
+
+                detailIntent.putExtra(UrlOption.BUNDLE_KEY, selectedUrl)
                 custom_button.stateDownloaded()
+
+                if (isSuccess and intentAction.equals(DownloadManager.ACTION_DOWNLOAD_COMPLETE)) {
+                    detailIntent.putExtra(DownloadStatus.BUNDLE_KEY, true)
+
+                } else {
+                    detailIntent.putExtra(DownloadStatus.BUNDLE_KEY, false)
+                }
 
                 pendingIntent = PendingIntent.getActivity(
                     applicationContext,
@@ -87,45 +107,51 @@ class MainActivity : AppCompatActivity() {
                     detailIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT
                 )
-
                 notificationManager.sendNotification(
                     applicationContext,
-                    "this is the message",
-                    pendingIntent
+                    pendingIntent,
+                    isSuccess,
+                    urlTitle
                 )
             }
         }
     }
 
-    private fun download(downloadInfo: Pair<Int, String>) {
+    private fun getDownloadStatus(context: Context?, id: Long): Boolean {
+        val downloadManager = context!!.getSystemService(DOWNLOAD_SERVICE) as DownloadManager
+        val query = DownloadManager.Query().setFilterById(id)
+        val cursor = downloadManager.query(query)
+
+        if (cursor.moveToFirst()) {
+            val columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)
+            val status = cursor.getInt(columnIndex)
+            return status == DownloadManager.STATUS_SUCCESSFUL
+        }
+        return false
+    }
+
+    private fun getShortTitle(context: Context?): String {
+        val titleResId = selectedUrl.shortTitleResId
+        return context?.getString(titleResId) ?: ""
+    }
+
+    private fun download(selectedOption: UrlOption) {
         val request =
-            DownloadManager.Request(Uri.parse(downloadInfo.second))
-                .setTitle(getString(downloadInfo.first))
+            DownloadManager.Request(Uri.parse(selectedOption.url))
+                .setTitle(getString(selectedOption.titleResId))
                 .setDescription(getString(R.string.app_description))
                 .setRequiresCharging(false)
                 .setAllowedOverMetered(true)
                 .setAllowedOverRoaming(true)
 
         val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
+        selectedUrl = selectedOption
         downloadID =
             downloadManager.enqueue(request)// enqueue puts the download request in the queue.
-
     }
 
     companion object {
-        private const val URL_PROJECT =
-            "https://github.com/udacity/nd940-c3-advanced-android-programming-project-starter/archive/master.zip"
-        private const val URL_GLIDE =
-            "https://github.com/bumptech/glide/archive/refs/heads/master.zip"
-        private const val URL_RETROFIT =
-            "https://github.com/square/retrofit/archive/refs/heads/master.zip"
-
-        private val URL_LIST = mapOf(
-            0 to Pair(R.string.udacity_button_title, URL_PROJECT),
-            1 to Pair(R.string.glide_button_title, URL_GLIDE),
-            2 to Pair(R.string.retrofit_button_title, URL_RETROFIT)
-        )
+        private const val NO_SELECTED_VALUE = -1
         private const val CHANNEL_ID = "channelId"
     }
-
 }

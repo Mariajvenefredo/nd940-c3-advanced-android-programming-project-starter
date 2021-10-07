@@ -4,8 +4,73 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/cream"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.DetailActivity"
     tools:showIn="@layout/activity_detail">
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_horizontal_center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.35" />
+
+    <TextView
+        android:id="@+id/filename_lbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/details_form_double_margin"
+        android:text="@string/file_name_label"
+        android:textColor="@color/darkMint"
+        android:textSize="@dimen/detailsTextSize"
+        app:layout_constraintEnd_toStartOf="@id/guideline_horizontal_center"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/filename_text"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/details_form_margin"
+        android:textColor="@color/darkMint"
+        android:textSize="@dimen/detailsTextSize"
+        app:layout_constraintStart_toStartOf="@id/guideline_horizontal_center"
+        app:layout_constraintTop_toTopOf="@+id/filename_lbl" />
+
+    <TextView
+        android:id="@+id/status_lbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/details_big_margin"
+        android:text="@string/status_label"
+        android:textColor="@color/darkMint"
+        android:textSize="@dimen/detailsTextSize"
+        app:layout_constraintEnd_toStartOf="@id/guideline_horizontal_center"
+        app:layout_constraintTop_toBottomOf="@id/filename_lbl" />
+
+    <TextView
+        android:id="@+id/status_text"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/details_form_margin"
+        android:textSize="@dimen/detailsTextSize"
+        app:layout_constraintStart_toStartOf="@id/guideline_horizontal_center"
+        app:layout_constraintTop_toTopOf="@+id/status_lbl" />
+
+    <Button
+        android:id="@+id/ok_button"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:bottomRightRadius="10dp"
+        android:bottomLeftRadius="10dp"
+        android:topLeftRadius="10dp"
+        android:topRightRadius="10dp"
+        android:text="@string/button_label"
+        android:textColor="@color/white"
+        android:textSize="@dimen/buttonTextSize"
+        android:backgroundTint="@color/mint"
+        app:layout_constraintTop_toTopOf="@+id/status_lbl"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

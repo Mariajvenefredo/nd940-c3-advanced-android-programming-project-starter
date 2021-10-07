@@ -2,9 +2,14 @@ package com.udacity.ui
 
 import android.animation.ValueAnimator
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.animation.doOnEnd
 import androidx.core.content.withStyledAttributes
 import com.udacity.R
 import com.udacity.utils.ButtonState
@@ -30,9 +35,10 @@ class LoadingButton @JvmOverloads constructor(
     private val clippingRectangle = RectF(0f, 0f, rectWidth, rectHeight)
     private val loadingRectangle = RectF(0f, 0f, 0f, rectHeight)
 
-    private val valueAnimator = ValueAnimator.ofFloat(0f, rectWidth)
     private var downloadPercentage = 0f
     private var buttonText = context.getString(R.string.button_name)
+
+    private lateinit var animator: ValueAnimator
 
     private var buttonState: ButtonState by Delegates.observable<ButtonState>(ButtonState.Completed) { p, old, new ->
         when (new) {
@@ -44,24 +50,37 @@ class LoadingButton @JvmOverloads constructor(
                 loadingAnimation(20000)
             }
             ButtonState.Loading -> {
-                loadingAnimation(2500)
+                animator.cancel()
+                loadingAnimation(2500, true)
             }
             ButtonState.Completed -> {
-
+                downloadPercentage = 0f
+                buttonText = context.getString(R.string.button_name)
+                isEnabled = true
             }
         }
     }
 
-    private fun loadingAnimation(customDuration: Long) {
-        valueAnimator.apply {
-            addUpdateListener {
-                downloadPercentage = animatedValue as Float
-                invalidate()
-            }
-            duration = customDuration
-            start()
-            isEnabled = false
-        }
+    private fun loadingAnimation(
+        customDuration: Long,
+        isCompleted: Boolean = false
+    ) {
+        animator =
+            ValueAnimator.ofFloat(downloadPercentage, rectWidth)
+                .apply {
+                    addUpdateListener {
+                        downloadPercentage = animatedValue as Float
+                        invalidate()
+                    }
+                    doOnEnd {
+                        if (isCompleted) {
+                            buttonState = ButtonState.Completed
+                        }
+                    }
+                    duration = customDuration
+                    isEnabled = false
+                    start()
+                }
     }
 
     init {
