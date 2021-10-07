@@ -1,6 +1,7 @@
-package com.udacity
+package com.udacity.ui
 
 import android.app.DownloadManager
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
@@ -13,15 +14,20 @@ import android.widget.RadioButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
-import androidx.core.view.marginBottom
+import com.udacity.R
+import com.udacity.utils.Constants.NOTIFICATION_ID
+import com.udacity.utils.createCustomChannel
+import com.udacity.utils.sendNotification
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    private var downloadID: Long = 0
+    private val notificationManager: NotificationManager =
+        getSystemService(NotificationManager::class.java)
+    private val detailIntent = Intent(applicationContext, DetailActivity::class.java)
 
-    private lateinit var notificationManager: NotificationManager
+    private var downloadID: Long = 0
     private lateinit var pendingIntent: PendingIntent
     private lateinit var action: NotificationCompat.Action
 
@@ -30,12 +36,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
+        createCustomChannel(applicationContext, notificationManager)
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
         createRadioButtons()
-
-        custom_button.setOnClickListener {
-            handleDownloadClick()
-        }
     }
 
     private fun handleDownloadClick() {
@@ -66,14 +69,30 @@ class MainActivity : AppCompatActivity() {
 
             radio_group.addView(radioButton)
         }
+
+        custom_button.setOnClickListener {
+            handleDownloadClick()
+        }
     }
 
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
             if (id == downloadID) {
-                Toast.makeText(context, "DOWNLOADED IHIH", Toast.LENGTH_LONG).show()
                 custom_button.stateDownloaded()
+
+                pendingIntent = PendingIntent.getActivity(
+                    applicationContext,
+                    NOTIFICATION_ID,
+                    detailIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT
+                )
+
+                notificationManager.sendNotification(
+                    applicationContext,
+                    "this is the message",
+                    pendingIntent
+                )
             }
         }
     }

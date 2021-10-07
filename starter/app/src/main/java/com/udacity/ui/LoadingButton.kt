@@ -1,4 +1,4 @@
-package com.udacity
+package com.udacity.ui
 
 import android.animation.ValueAnimator
 import android.content.Context
@@ -6,6 +6,8 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.withStyledAttributes
+import com.udacity.R
+import com.udacity.utils.ButtonState
 import kotlin.properties.Delegates
 
 
