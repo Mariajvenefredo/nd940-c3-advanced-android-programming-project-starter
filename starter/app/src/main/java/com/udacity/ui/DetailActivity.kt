@@ -1,9 +1,12 @@
 package com.udacity.ui
 
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
+import com.udacity.Constants.NOTIFICATION_ID
 import com.udacity.R
 import com.udacity.models.DownloadStatus
 import com.udacity.models.UrlOption
@@ -19,6 +22,9 @@ class DetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
         setSupportActionBar(toolbar)
+
+        cancelNotification()
+
         val receivedStatus = intent.extras?.get(DownloadStatus.BUNDLE_KEY) as Boolean
         downloadStatus = DownloadStatus.getByBoolean(receivedStatus)
         downloadUrl = intent.extras?.get(UrlOption.BUNDLE_KEY) as UrlOption
@@ -30,6 +36,12 @@ class DetailActivity : AppCompatActivity() {
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             startActivity(intent)
         }
+    }
+
+    private fun cancelNotification() {
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancel(NOTIFICATION_ID)
     }
 
     private fun fillDetailedInformation() {

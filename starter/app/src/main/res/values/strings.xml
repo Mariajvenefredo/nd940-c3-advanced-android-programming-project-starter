@@ -30,4 +30,5 @@
     <string name="file_name_label">File Name:</string>
     <string name="status_label">Status:</string>
     <string name="button_label">OK</string>
+    <string name="button_details_label">Details</string>
 </resources>

@@ -7,10 +7,10 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.os.Build
 import androidx.core.app.NotificationCompat
-import com.udacity.R
 import com.udacity.Constants.CHANNEL_ID
 import com.udacity.Constants.CHANNEL_NAME
 import com.udacity.Constants.NOTIFICATION_ID
+import com.udacity.R
 
 fun createCustomChannel(
     context: Context,
@@ -45,7 +45,7 @@ fun NotificationManager.sendNotification(
     } else {
         context.getString(R.string.notification_description_failed, urlTitle)
     }
-
+    val actionLabel = context.getString(R.string.button_details_label)
     val cloudImage = BitmapFactory.decodeResource(
         context.resources,
         R.drawable.cloud_image
@@ -61,7 +61,11 @@ fun NotificationManager.sendNotification(
     )
         .setContentTitle(context.getString(R.string.notification_title))
         .setContentText(description)
-        .setContentIntent(pendingIntent)
+        .addAction(
+            R.drawable.cloud_image,
+            actionLabel,
+            pendingIntent
+        )
         .setStyle(bigPicStyle)
         .setSmallIcon(R.drawable.cloud_image)
         .setLargeIcon(cloudImage)
