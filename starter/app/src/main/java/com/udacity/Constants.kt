@@ -1,4 +1,4 @@
-package com.udacity.utils
+package com.udacity
 
 object Constants{
     const val CHANNEL_ID = "download_channel"

@@ -1,4 +1,4 @@
-package com.udacity.utils
+package com.udacity.models
 
 
 sealed class ButtonState {

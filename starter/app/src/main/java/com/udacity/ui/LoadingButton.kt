@@ -12,7 +12,7 @@ import android.view.View
 import androidx.core.animation.doOnEnd
 import androidx.core.content.withStyledAttributes
 import com.udacity.R
-import com.udacity.utils.ButtonState
+import com.udacity.models.ButtonState
 import kotlin.properties.Delegates
 
 
@@ -28,12 +28,15 @@ class LoadingButton @JvmOverloads constructor(
     private var buttonPaint = Paint()
     private var downloadPaint = Paint()
     private var textPaint = Paint()
+    private var arcPaint = Paint()
 
     private val rectWidth = resources.getDimension(R.dimen.rectWidth)
     private val rectHeight = resources.getDimension(R.dimen.rectHeight)
 
     private val clippingRectangle = RectF(0f, 0f, rectWidth, rectHeight)
     private val loadingRectangle = RectF(0f, 0f, 0f, rectHeight)
+    private var loadingArc =
+        RectF(rectWidth - 150f, (rectHeight / 2) - 30f, rectWidth - 90f, (rectHeight / 2) + 30f)
 
     private var downloadPercentage = 0f
     private var buttonText = context.getString(R.string.button_name)
@@ -104,6 +107,10 @@ class LoadingButton @JvmOverloads constructor(
             textAlign = Paint.Align.CENTER
             textSize = resources.getDimension(R.dimen.buttonTextSize)
         }
+        arcPaint = Paint().apply {
+            isAntiAlias = true
+            color = Color.WHITE
+        }
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -112,12 +119,19 @@ class LoadingButton @JvmOverloads constructor(
         val path = Path().apply {
             addRoundRect(clippingRectangle, 10f, 10f, Path.Direction.CCW)
         }
-        canvas?.clipPath(path)
-        canvas?.drawColor(customBackgroundColor)
+        canvas?.apply {
+            clipPath(path)
+            drawColor(customBackgroundColor)
 
-        loadingRectangle.right = downloadPercentage
-        canvas?.drawRoundRect(loadingRectangle, 10f, 10f, downloadPaint)
-        canvas?.drawText(buttonText, rectWidth / 2, (rectHeight / 2) + 20, textPaint)
+            loadingRectangle.right = downloadPercentage
+            drawRoundRect(loadingRectangle, 10f, 10f, downloadPaint)
+
+            val angle = downloadPercentage * 360f / rectWidth
+            drawArc(loadingArc, 0f, angle, true, arcPaint)
+
+            drawText(buttonText, rectWidth / 2, (rectHeight / 2) + 20, textPaint)
+
+        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

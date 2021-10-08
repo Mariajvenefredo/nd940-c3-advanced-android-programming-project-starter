@@ -4,9 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
-import com.udacity.DownloadStatus
 import com.udacity.R
-import com.udacity.UrlOption
+import com.udacity.models.DownloadStatus
+import com.udacity.models.UrlOption
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.content_detail.*
 
@@ -23,19 +23,21 @@ class DetailActivity : AppCompatActivity() {
         downloadStatus = DownloadStatus.getByBoolean(receivedStatus)
         downloadUrl = intent.extras?.get(UrlOption.BUNDLE_KEY) as UrlOption
 
-
-        val color = ResourcesCompat.getColor(resources, downloadStatus.answerColor, null)
-
-        status_text.text = getString(downloadStatus.statusResId)
-
-        status_text.setTextColor(color)
-
-        filename_text.text = getString(downloadUrl.titleResId)
+        fillDetailedInformation()
 
         ok_button.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             startActivity(intent)
         }
+    }
+
+    private fun fillDetailedInformation() {
+        status_text.text = getString(downloadStatus.statusResId)
+
+        val color = ResourcesCompat.getColor(resources, downloadStatus.answerColor, null)
+        status_text.setTextColor(color)
+
+        filename_text.text = getString(downloadUrl.titleResId)
     }
 }

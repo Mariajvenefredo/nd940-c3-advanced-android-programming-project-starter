@@ -1,4 +1,6 @@
-package com.udacity
+package com.udacity.models
+
+import com.udacity.R
 
 enum class UrlOption(val id: Int, val titleResId: Int, val shortTitleResId: Int, val url: String) {
     UDACITY(

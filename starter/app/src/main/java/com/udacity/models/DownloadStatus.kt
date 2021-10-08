@@ -1,6 +1,6 @@
-package com.udacity
+package com.udacity.models
 
-import android.graphics.Color
+import com.udacity.R
 
 enum class DownloadStatus(val success: Boolean, val statusResId: Int, val answerColor: Int) {
     FAILED(false, R.string.download_status_failed, R.color.pinkRed),

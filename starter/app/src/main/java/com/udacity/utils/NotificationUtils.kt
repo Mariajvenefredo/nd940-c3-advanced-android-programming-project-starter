@@ -6,12 +6,11 @@ import android.app.PendingIntent
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.udacity.R
-import com.udacity.utils.Constants.CHANNEL_ID
-import com.udacity.utils.Constants.CHANNEL_NAME
-import com.udacity.utils.Constants.NOTIFICATION_ID
+import com.udacity.Constants.CHANNEL_ID
+import com.udacity.Constants.CHANNEL_NAME
+import com.udacity.Constants.NOTIFICATION_ID
 
 fun createCustomChannel(
     context: Context,
