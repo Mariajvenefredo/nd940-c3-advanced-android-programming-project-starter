@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.motion.widget.MotionLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/cream"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    app:layoutDescription="@xml/motion_scene"
     tools:context=".ui.DetailActivity"
+    android:background="@color/cream"
     tools:showIn="@layout/activity_detail">
 
     <androidx.constraintlayout.widget.Guideline
@@ -22,6 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/details_form_double_margin"
         android:text="@string/file_name_label"
+        android:maxLines="1"
         android:textColor="@color/darkMint"
         android:textSize="@dimen/detailsTextSize"
         app:layout_constraintEnd_toStartOf="@id/guideline_horizontal_center"
@@ -73,4 +76,4 @@
         android:textSize="@dimen/buttonTextSize"
         android:backgroundTint="@color/mint"
         app:layout_constraintTop_toTopOf="@+id/status_lbl"/>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.motion.widget.MotionLayout>
